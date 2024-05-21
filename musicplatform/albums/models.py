@@ -1,9 +1,6 @@
 from django.db import models
-from django.dispatch import receiver
-from django.db.models.signals import post_delete
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFit
-from pathlib import Path
 from artists.models import Artist
 
 

@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from knox.views import LoginView as KnoxLoginView
 
-from users.models import User
+from .models import User
 
 
 class LoginView(KnoxLoginView):
