@@ -11,20 +11,20 @@ from .filters import AlbumFilter, SongFilter
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
-    # filterset_fields = ["cost","name"]
     filterset_class = AlbumFilter
     
     def create(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return Response({"detail":"No authentication provided"},status=status.HTTP_401_UNAUTHORIZED)
         
+        try:
+            artist = Artist.objects.get(user=request.user)
+        except Exception:
+            return Response({"detail":"This user is not an artist"},status=status.HTTP_403_FORBIDDEN)
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        artist_name = request.data.get("artist")
-        user = Artist.objects.get(stage_name = artist_name).user
-        if request.user != user:
-            return Response({"detail":"You don't have permission to access another artist's resources"},status=status.HTTP_403_FORBIDDEN)
+        serializer.validated_data["artist"] = artist
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -36,12 +36,9 @@ class AlbumViewSet(viewsets.ModelViewSet):
         
         instance = self.get_object()
 
-        artist_name=instance.artist
-        artist_object=Artist.objects.get(stage_name=artist_name)
-        user = artist_object.user
-
+        user=instance.artist.user
         if  request.user != user:
-            return Response({"detail":"You don't have permission to access another artist's resources"},status=status.HTTP_403_FORBIDDEN)
+            return Response({"detail":"You do not have permission to access another user's resources"},status=status.HTTP_403_FORBIDDEN)
 
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -49,17 +46,13 @@ class AlbumViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return Response({"detail":"No authentication provided"},status=status.HTTP_401_UNAUTHORIZED)
-        if request.data.get("artist"):
-            return Response({"detail":"artist cannot be changed"},status=status.HTTP_400_BAD_REQUEST)
         
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        artist_name=instance.artist
-        artist_object=Artist.objects.get(stage_name=artist_name)
-        user = artist_object.user
+        user = instance.artist.user
         if request.user != user:
-            return Response({"detail":"You don't have permission to access another artist's resources"},status=status.HTTP_403_FORBIDDEN)
+            return Response({"detail":"You do not have permission to access another user's resources"},status=status.HTTP_403_FORBIDDEN)
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)

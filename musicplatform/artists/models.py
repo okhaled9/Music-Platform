@@ -5,7 +5,7 @@ from users.models import User
 class Artist(models.Model):
     stage_name = models.CharField(primary_key=True, max_length=50)
     social_link = models.URLField(blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
 
     @property
     def approved_albums(self):

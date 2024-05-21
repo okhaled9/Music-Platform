@@ -5,7 +5,7 @@ from artists.models import Artist
 
 
 class Album(models.Model):
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, editable=False)
     name = models.CharField(max_length=20)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     release_datetime = models.DateTimeField()

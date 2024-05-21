@@ -1,5 +1,5 @@
 from .models import Artist
-from .serializers import *
+from .serializers import ArtistSerializer
 from rest_framework import viewsets
 
 

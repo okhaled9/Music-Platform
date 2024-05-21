@@ -11,7 +11,7 @@ class AlbumForm(forms.ModelForm):
 
 
 class AlbumAdmin(admin.ModelAdmin):
-    readonly_fields = ["id", "creation_datetime"]
+    readonly_fields = ["id", "creation_datetime", "artist"]
     form = AlbumForm
 
 

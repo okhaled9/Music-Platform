@@ -12,6 +12,7 @@ class AlbumInline(admin.TabularInline):
 class ArtistAdmin(admin.ModelAdmin):
     list_display = ["stage_name", "get_approved"]
     inlines = [AlbumInline]
+    readonly_fields = ["user"]
 
     @admin.display(description="APPROVED ALBUMS")
     def get_approved(self, obj):
